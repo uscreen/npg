@@ -19,11 +19,24 @@ test.local:
 	${DOCKER_IMAGE_NAME}:latest \
 	--test
 
-build.latest:
+build.ghcr:
 	docker buildx build --pull --push \
 	--platform linux/amd64 \
 	-t ${DOCKER_IMAGE_URL}:latest \
 	-t ${DOCKER_IMAGE_URL}:${VERSION} \
 	. --label "version=v${VERSION}"
 
-.PHONY: test
+build.ghcr.multi:
+	docker buildx build --pull --push \
+	--platform linux/amd64,linux/arm64 \
+	-t ${DOCKER_IMAGE_URL}:latest \
+	-t ${DOCKER_IMAGE_URL}:${VERSION} \
+	. --label "version=v${VERSION}"
+
+login.ghcr:
+	echo ${GITHUB_TOKEN} | docker login ghcr.io -u ${GITHUB_USERNAME} --password-stdin
+
+# Legacy target for backward compatibility
+build.latest: build.ghcr
+
+.PHONY: test build.local run.local test.local build.ghcr build.ghcr.multi login.ghcr build.latest
