@@ -3,7 +3,7 @@
 [![Test & Build](https://github.com/uscreen/npg/actions/workflows/docker.yml/badge.svg)](https://github.com/uscreen/npg/actions/workflows/docker.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/uscreen/npg/badge.svg)](https://snyk.io/test/github/uscreen/npg)
 [![codecov](https://codecov.io/gh/uscreen/npg/graph/badge.svg?token=0QK0kheO7v)](https://codecov.io/gh/uscreen/npg)
-[![License: MIT](https://img.shields.io/github/license/uscreen/npg)](https://opensource.org/license/agpl-v3)
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL_v3-blue)](https://opensource.org/license/agpl-v3)
 
 A security-focused npm registry proxy that protects your development environment from malicious packages and supply chain attacks while providing high-performance caching.
 
@@ -26,33 +26,78 @@ A security-focused npm registry proxy that protects your development environment
 - **Sharded Storage** - 2-character directory sharding for optimal filesystem performance
 - **Cache Monitoring** - `X-Cache` headers for performance insights
 
-## Quick Start
+## Pre-Built Docker
 
-### 1. Install dependencies
+### Quick Start
+
+Defaults are good enough for local testing:
 ```bash
-pnpm install
+docker run -d --name npg ghcr.io/uscreen/npg:latest
 ```
 
-### 2. Start the proxy
-```bash
-pnpm dev
-```
-
-### 3. Configure npm/pnpm to use the proxy
+Configure npm/pnpm to use your local proxy
 ```bash
 # Create or edit ~/.npmrc
 echo "registry=http://127.0.0.1:3000/npm/" >> ~/.npmrc
-
-# For pnpm, create or edit ~/.npmrc
-echo "registry=http://127.0.0.1:3000/npm/" >> ~/.npmrc
 ```
 
-### 4. Use npm/pnpm normally
+Use npm/pnpm normally
 ```bash
 npm install lodash
 # or
 pnpm install lodash
 ```
+
+### Production Setup
+
+For production or containerized environments, you should deploy NPG with persistent storage and custom configuration:
+
+#### 1. Create directories for persistent data
+```bash
+mkdir -p npg-data/{storage,malware-list,etc}
+```
+
+#### 2. Create basic configuration (optional)
+```bash
+# Create a minimal blacklist configuration
+cat > npg-data/etc/blacklist.yml << 'EOF'
+packages: []
+patterns: []
+EOF
+```
+
+#### 3. Run with Docker
+In production, mount volumes for persistent storage and configuration:
+```bash
+docker run -d \
+  --name npg \
+  -p 3000:3000 \
+  -v $(pwd)/npg-data/storage:/app/var/storage \
+  -v $(pwd)/npg-data/malware-list:/app/var/malware-list \
+  -v $(pwd)/npg-data/etc:/app/etc \
+  -e HTTP_BIND=0.0.0.0 \
+  ghcr.io/uscreen/npg:latest
+```
+
+#### 4. Configure npm/pnpm to use the proxy
+```bash
+# Point to your Docker host
+echo "registry=http://localhost:3000/npm/" >> ~/.npmrc
+```
+
+#### 5. Use npm/pnpm normally
+```bash
+npm install lodash
+# or
+pnpm install lodash
+```
+
+**Docker Environment Variables:**
+- `HTTP_PORT=3000` - Server port (default: 3000)
+- `HTTP_BIND=0.0.0.0` - Bind address (important for Docker)
+- `LOG_LEVEL=info` - Log level (debug, info, warn, error)
+- `STORAGE_DIR=/app/var/storage` - Storage directory (use Docker volumes)
+- `BLACKLIST_PATH=/app/etc/blacklist.yml` - Blacklist configuration path
 
 ## Configuration
 
@@ -70,6 +115,14 @@ PROXY_URL=http://127.0.0.1:3000/npm
 # Storage settings
 STORAGE_DIR=../var/storage
 ```
+
+## API Endpoints
+
+- **Package metadata**: `GET /npm/:packageName`
+- **Scoped packages**: `GET /npm/@:scope/:packageName`
+- **Tarballs**: `GET /npm/:packageName/-/:filename`
+- **Scoped tarballs**: `GET /npm/@:scope/:packageName/-/:filename`
+- **Audit/Search/etc**: All other npm registry endpoints are proxied
 
 ## Storage Structure
 
@@ -113,23 +166,6 @@ rm -rf ../var/storage/@b/@babel/core/   # Scoped package
 ```bash
 rm -rf ../var/storage/ ../var/malware-list/
 ```
-
-## API Endpoints
-
-- **Package metadata**: `GET /npm/:packageName`
-- **Scoped packages**: `GET /npm/@:scope/:packageName`
-- **Tarballs**: `GET /npm/:packageName/-/:filename`
-- **Scoped tarballs**: `GET /npm/@:scope/:packageName/-/:filename`
-- **Audit/Search/etc**: All other npm registry endpoints are proxied
-
-## Development
-
-### Commands
-- `pnpm dev` - Start development server with nodemon
-- `pnpm test` - Run tests using Node.js built-in test runner
-- `pnpm test:cov` - Run tests with coverage
-- `pnpm lint` - Run linting
-- `pnpm lint:fix` - Run linting with auto-fix
 
 ## Security Configuration
 
@@ -235,6 +271,38 @@ NPG is compatible with:
 - npm search
 - Private registries (configure `REGISTRY_URL`)
 - Scoped packages
+
+## Development
+
+### 1. Install dependencies
+```bash
+pnpm install
+```
+
+### 2. Start the proxy
+```bash
+pnpm dev
+```
+
+### 3. Configure npm/pnpm to use the proxy
+```bash
+# Create or edit ~/.npmrc
+echo "registry=http://127.0.0.1:3000/npm/" >> ~/.npmrc
+```
+
+### 4. Use npm/pnpm normally
+```bash
+npm install lodash
+# or
+pnpm install lodash
+```
+
+### Commands
+- `pnpm dev` - Start development server with nodemon
+- `pnpm test` - Run tests using Node.js built-in test runner
+- `pnpm test:cov` - Run tests with coverage
+- `pnpm lint` - Run linting
+- `pnpm lint:fix` - Run linting with auto-fix
 
 ---
 
