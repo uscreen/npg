@@ -1,4 +1,4 @@
-name: Docker
+name: Test & Build
 
 on:
   push:
@@ -9,11 +9,52 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: uscreen/npg
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      dragonfly:
+        image: docker.dragonflydb.io/dragonflydb/dragonfly
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup pnpm via Corepack
+        run: corepack prepare --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test:cov
+        env:
+          NODE_ENV: test
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: uscreen/npg-dev
+
   build:
     runs-on: ubuntu-latest
+    needs: [test]
+    if: needs.test.result == 'success'
     permissions:
       contents: read
       packages: write
@@ -39,10 +80,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            # Canary builds for every push to main/develop
-            type=raw,value=canary,enable={{is_default_branch}}
-            type=raw,value=canary-{{branch}},enable=${{ github.ref_name != 'main' && github.event_name == 'push' }}
-            type=raw,value=canary-{{sha}},enable=${{ github.event_name == 'push' }}
+            # Single canary tag for pushes
+            type=raw,value=canary,enable=${{ github.event_name == 'push' }}
             # PR builds
             type=ref,event=pr,prefix=pr-
             # Release builds only on tags
