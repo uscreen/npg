@@ -1,5 +1,10 @@
 # NPG (Node Package Guard)
 
+[![CI](https://github.com/uscreen/npg-dev/actions/workflows/test.yml/badge.svg)](https://github.com/uscreen/npg-dev/actions/workflows/test.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/uscreen/npg-dev/badge.svg)](https://snyk.io/test/github/uscreen/npg-dev)
+[![codecov](https://codecov.io/gh/uscreen/npg-dev/branch/main/graph/badge.svg)](https://codecov.io/gh/uscreen/npg-dev)
+[![License: MIT](https://img.shields.io/github/license/uscreen/npg-dev)](https://opensource.org/license/agpl-v3)
+
 A security-focused npm registry proxy that protects your development environment from malicious packages and supply chain attacks while providing high-performance caching.
 
 ## Security Features

@@ -34,8 +34,14 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm test:cov
         env:
           NODE_ENV: test
           REDIS_HOST: localhost
           REDIS_PORT: 6379
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: uscreen/npg-dev
