@@ -14,19 +14,39 @@ const schema = {
     PREFIX: { default: '/api' },
     LOG_ENABLED: { default: true },
     LOG_LEVEL: { default: 'warn' },
+
+    /**
+     * upstream registry settings
+     */
     REGISTRY_URL: { default: 'https://registry.npmjs.org' },
     REGISTRY_POLL_URL: { default: 'https://replicate.npmjs.com/registry' },
+
+    /**
+     * proxy settings
+     */
     PROXY_URL: { default: 'http://127.0.0.1:3000/npm' },
     STORAGE_DIR: { default: '../var/storage' },
     BLACKLIST_PATH: { default: '../etc/blacklist.yml' },
+
+    /**
+     * malware list settings
+     */
     MALWARE_LIST_DIR: { default: '../var/malware-list' },
     UPDATE_INTERVAL: { default: 30 * 60 * 1000 }, // 30 minutes
-    ENABLE_REDIS_CACHE: { default: true },
-    REDIS_HOST: { default: 'localhost' },
+
+    /**
+     * Redis cache settings
+     */
+    ENABLE_REDIS_CACHE: { default: false },
+    REDIS_HOST: { default: '127.0.0.1' },
     REDIS_PORT: { default: 6379 },
     REDIS_PASSWORD: { default: undefined },
     REDIS_DB: { default: 0 },
-    ENABLE_NPM_CHANGES_POLLER: { default: true },
+
+    /**
+     * NPM changes poller settings
+     */
+    ENABLE_NPM_CHANGES_POLLER: { default: false },
     NPM_CHANGES_POLL_INTERVAL: { default: 5000 },
     NPM_CHANGES_BATCH_SIZE: { default: 500 },
   },

@@ -9,7 +9,7 @@ A security-focused npm registry proxy that protects your development environment
 
 ## Security Features
 
-- **Aikido Intel Integration** - Automatic blocking using [Aikido's open-source malware threat feed](https://www.aikido.dev/blog/launching-aikido-malware---open-source-threat-feed)
+- **Aikido Intel Integration** - Automatic blocking using [Aikido's open-source malware threat feed](https://intel.aikido.dev/?tab=malware)
 - **Package Blacklisting** - Block malicious packages, vulnerable versions, and suspicious patterns via YAML configuration
 - **Version-Specific Blocking** - Support for exact versions and semver ranges
 - **Pattern Matching** - Block packages by regex patterns (e.g., typosquatting)
@@ -240,4 +240,4 @@ NPG is compatible with:
 
 Built with [Fastify](https://fastify.dev) and [Node.js](https://nodejs.org) by [u|screen](https://uscreen.de)
 
-**Security powered by [Aikido Intel](https://www.aikido.dev/blog/launching-aikido-malware---open-source-threat-feed)** - Open-source malware threat feed (AGPL-3.0). For local package scanning, consider [Aikido Safe Chain](https://github.com/AikidoSec/safe-chain) - CLI tool for detecting malicious packages in your dependencies
+**Security powered by [Aikido Intel](https://intel.aikido.dev/?tab=malware)** - Open-source malware threat feed (AGPL-3.0). For local package scanning, consider [Aikido Safe Chain](https://github.com/AikidoSec/safe-chain) - CLI tool for detecting malicious packages in your dependencies

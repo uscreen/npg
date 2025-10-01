@@ -30,13 +30,13 @@ export default fp(
       enableReadyCheck: true,
       lazyConnect: true,
       maxRetriesPerRequest: 3,
-      // Optimized for high-performance caching
-      // keyPrefix: '{npg}',
       connectTimeout: 5000,
+
       // Disable auto-retry to fail fast when Redis unavailable
       retryDelayOnClusterDown: 300,
       retryDelayOnFailover: 300,
       enableOfflineQueue: false,
+
       // Silence unhandled error events
       silentError: true,
     })

@@ -47,6 +47,8 @@ jobs:
         run: pnpm test:cov
         env:
           NODE_ENV: test
+          ENABLE_REDIS_CACHE: true
+          ENABLE_NPM_CHANGES_POLLER: false
           REDIS_HOST: localhost
           REDIS_PORT: 6379
 
