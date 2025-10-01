@@ -33,9 +33,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Wait for DragonflyDB
-        run: timeout 30s bash -c 'until redis-cli -h localhost -p 6379 ping; do sleep 1; done'
-
       - name: Run tests
         run: pnpm test
         env:
