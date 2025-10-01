@@ -1,9 +1,9 @@
 # NPG (Node Package Guard)
 
-[![Test & Build](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml/badge.svg)](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/uscreen/npg-dev/badge.svg)](https://snyk.io/test/github/uscreen/npg-dev)
-[![codecov](https://codecov.io/gh/uscreen/npg-dev/branch/main/graph/badge.svg)](https://codecov.io/gh/uscreen/npg-dev)
-[![License: MIT](https://img.shields.io/github/license/uscreen/npg-dev)](https://opensource.org/license/agpl-v3)
+[![Test & Build](https://github.com/uscreen/npg/actions/workflows/docker.yml/badge.svg)](https://github.com/uscreen/npg/actions/workflows/docker.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/uscreen/npg/badge.svg)](https://snyk.io/test/github/uscreen/npg)
+[![codecov](https://codecov.io/gh/uscreen/npg/graph/badge.svg?token=0QK0kheO7v)](https://codecov.io/gh/uscreen/npg)
+[![License: MIT](https://img.shields.io/github/license/uscreen/npg)](https://opensource.org/license/agpl-v3)
 
 A security-focused npm registry proxy that protects your development environment from malicious packages and supply chain attacks while providing high-performance caching.
 
