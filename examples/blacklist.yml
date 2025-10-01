@@ -1,0 +1,126 @@
+# NPG Suspicious Packages Blacklist
+# Generated from security analysis - potential typosquatting/malicious packages
+# Source: Security research identifying packages with suspicious patterns
+
+packages:
+  # Suspicious @ahmedhfarag packages (potential typosquatting of ngx packages)
+  - name: '@ahmedhfarag/ngx-perfect-scrollbar'
+    versions: [20.0.20]
+    reason: Potential typosquatting of legitimate ngx packages
+
+  - name: '@ahmedhfarag/ngx-virtual-scroller'
+    versions: [4.0.4]
+    reason: Potential typosquatting of legitimate ngx packages
+
+  # Suspicious @art-ws packages (mimicking legitimate workspace tools)
+  - name: '@art-ws/common'
+    versions: [2.0.28]
+    reason: Suspicious workspace package with generic name
+
+  - name: '@art-ws/config-eslint'
+    versions: [2.0.4, 2.0.5]
+    reason: Potential malicious ESLint configuration package
+
+  - name: '@art-ws/config-ts'
+    versions: [2.0.7, 2.0.8]
+    reason: Potential malicious TypeScript configuration package
+
+  - name: '@art-ws/di'
+    versions: [2.0.28, 2.0.32]
+    reason: Suspicious dependency injection package
+
+  - name: '@art-ws/eslint'
+    versions: [1.0.5, 1.0.6]
+    reason: Potential malicious ESLint package
+
+  - name: '@art-ws/fastify-http-server'
+    versions: [2.0.24, 2.0.27]
+    reason: Suspicious HTTP server package
+
+  # CrowdStrike packages with unusual version patterns
+  - name: '@crowdstrike/logscale-dashboard'
+    versions: [1.205.1, 1.205.2]
+    reason: Unusual version pattern for CrowdStrike package - verify authenticity
+
+  - name: '@crowdstrike/logscale-file-editor'
+    versions: [1.205.1, 1.205.2]
+    reason: Unusual version pattern for CrowdStrike package - verify authenticity
+
+  # @ctrl packages (potential typosquatting of control libraries)
+  - name: '@ctrl/qbittorrent'
+    versions: [9.7.1, 9.7.2]
+    reason: Potential malicious torrent-related package
+
+  - name: '@ctrl/transmission'
+    versions: [7.3.1]
+    reason: Potential malicious torrent-related package
+
+  - name: '@ctrl/torrent-file'
+    versions: [4.1.1, 4.1.2]
+    reason: Potential malicious torrent-related package
+
+  # Packages with -rpk suffix (suspicious pattern)
+  - name: devextreme-angular-rpk
+    versions: [21.2.8]
+    reason: 'Suspicious -rpk suffix, potential modified version of legitimate package'
+
+  - name: globalize-rpk
+    versions: [1.7.4]
+    reason: 'Suspicious -rpk suffix, potential modified version of legitimate package'
+
+  - name: printjs-rpk
+    versions: [1.6.1]
+    reason: 'Suspicious -rpk suffix, potential modified version of legitimate package'
+
+  # Packages with unusual version patterns or naming
+  - name: ng2-file-upload
+    versions: ['>=7.0.0 <=9.0.3']
+    reason: Package versions with suspicious activity patterns
+
+  - name: ngx-bootstrap
+    versions: ['>=18.1.4 <=20.0.5']
+    reason: Versions with reported security issues
+
+  # Block entire suspicious organizations
+  - name: '@operato/board'
+    reason: Suspicious organization with mass package publishing
+
+  - name: '@operato/graphql'
+    reason: Suspicious organization with mass package publishing
+
+  - name: '@things-factory/email-base'
+    reason: Suspicious organization with excessive version releases
+
+# Pattern-based blocking for comprehensive protection
+patterns:
+  # Block suspicious organizations entirely
+  - pattern: '@ahmedhfarag/.*'
+    reason: Suspicious organization - potential typosquatting of legitimate packages
+
+  - pattern: '@art-ws/.*'
+    reason: Suspicious workspace organization with generic tool names
+
+  - pattern: '@operato/.*'
+    reason: Organization with suspicious mass publishing patterns
+
+  - pattern: '@things-factory/.*'
+    reason: Organization with suspicious version release patterns
+
+  # Block packages with suspicious suffixes
+  - pattern: '.*-rpk$'
+    reason: Packages with suspicious -rpk suffix - likely modified versions
+
+  # Block potential typosquatting patterns
+  - pattern: 'ng[0-9]+-.*'
+    reason: Potential typosquatting of Angular packages
+
+  - pattern: 'react-.*-image$'
+    reason: Suspicious React image manipulation packages
+
+  # Block packages with torrent/P2P functionality (potential malware vector)
+  - pattern: '.*(torrent|qbittorrent|transmission|magnet).*'
+    reason: Packages related to torrenting/P2P - potential malware vector
+
+  # Block packages with suspicious health/medical terms (often used in malware)
+  - pattern: '.*(health|medical|rxnt).*'
+    reason: Packages with medical terms - verify legitimacy before use

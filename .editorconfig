@@ -1,0 +1,32 @@
+# @see editorconfig.org
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# to tweak prettier, @see https://github.com/tailwindlabs/tailwindcss.com/blob/master/prettier.config.js
+[*.vue]
+max_line_length = 160
+
+[*.json]
+indent_size = 2
+
+[*.js]
+indent_size = 2
+
+[*.yml]
+indent_size = 2
+
+# Trailing whitespace is significant in markdown files.
+[*.md]
+trim_trailing_whitespace = false
+
+[Makefile]
+indent_style = tab
+indent_size = 4

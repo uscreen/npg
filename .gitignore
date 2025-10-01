@@ -1,0 +1,13 @@
+node_modules
+/.env
+/.nyc_output
+/coverage
+.DS_Store
+/.eslintcache
+/var/storage/*
+!/var/storage/.gitkeep
+/var/malware-list/*
+!/var/malware-list/.gitkeep
+/etc/*
+!/etc/.gitkeep
+/malware-list.aikido.dev

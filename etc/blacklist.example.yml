@@ -1,0 +1,36 @@
+# Example NPG Package Blacklist Configuration
+# Copy this to blacklist.yml to enable package blocking
+
+# Block packages (entirely or specific versions)
+packages:
+  - name: malicious-package
+    reason: Known malware - blocks all versions
+
+  - name: crypto-stealer
+    reason: Cryptocurrency theft malware
+
+  - name: '@evil/package'
+    reason: Malicious scoped package
+
+  - name: event-stream
+    versions: [3.3.6]
+    reason: Contains bitcoin mining malware (exact version)
+
+  - name: colors
+    versions: ['>=1.4.44 <1.4.46']
+    reason: DoS vulnerability (semver range)
+
+# When 'versions' is specified, only those versions/ranges are blocked
+# When 'versions' is omitted, the entire package is blocked
+# Supports both exact versions and semver ranges:
+# - Exact: ['1.2.3', '2.0.0']
+# - Ranges: ['>=1.4.44 <1.4.46', '^2.0.0', '~1.5.0']
+# - Mixed: ['1.2.3', '>=2.0.0 <3.0.0']
+
+# Pattern-based blocking (regex)
+patterns:
+  - pattern: '.*malware.*'
+    reason: Suspicious package name containing "malware"
+
+  - pattern: '^(test|demo)-.*-stealer$'
+    reason: Common pattern for credential stealers

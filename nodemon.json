@@ -1,0 +1,6 @@
+{
+  "watch": ["app/", "test/"],
+  "ignore": ["npm-storage/", "npm-cache/"],
+  "ext": "js,json",
+  "exec": "node app/server.js"
+}
