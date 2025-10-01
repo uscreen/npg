@@ -1,7 +1,6 @@
 # NPG (Node Package Guard)
 
-[![Tests](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml/badge.svg?job=test)](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml)
-[![Build](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml/badge.svg?job=build)](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml)
+[![Test & Build](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml/badge.svg)](https://github.com/uscreen/npg-dev/actions/workflows/docker.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/uscreen/npg-dev/badge.svg)](https://snyk.io/test/github/uscreen/npg-dev)
 [![codecov](https://codecov.io/gh/uscreen/npg-dev/branch/main/graph/badge.svg)](https://codecov.io/gh/uscreen/npg-dev)
 [![License: MIT](https://img.shields.io/github/license/uscreen/npg-dev)](https://opensource.org/license/agpl-v3)
