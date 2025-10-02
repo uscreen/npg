@@ -50,7 +50,16 @@ pnpm install lodash
 
 ### Production Setup
 
-For production or containerized environments, you should deploy NPG with persistent storage and custom configuration:
+For production or containerized environments, you should deploy NPG with persistent storage and custom configuration.
+
+**⚠️ Important for Production**: Always deploy NPG behind a reverse proxy (traefik, nginx, Cloudflare, etc.) that handles:
+- **TLS termination** for secure HTTPS connections
+- **Compression** (gzip/brotli) for optimal performance - this is critical for npm metadata. Missing compression can lead to very slow installs.
+- **Custom Domain & Path Setup** - e.g. `https://npg.yourdomain.com/npm` - this is crucial for rewriting URLs correctly for npm clients (esp. pnpm).
+
+For now, NPG itself serves uncompressed HTTP traffic and relies on the reverse proxy for these essential production features.
+
+> **Coming Soon**: Docker Compose examples for common production scenarios (traefik reverse proxy, Redis caching, multi-instance deployments) will be added to simplify deployment.
 
 #### 1. Create directories for persistent data
 ```bash
@@ -75,14 +84,14 @@ docker run -d \
   -v $(pwd)/npg-data/storage:/app/var/storage \
   -v $(pwd)/npg-data/malware-list:/app/var/malware-list \
   -v $(pwd)/npg-data/etc:/app/etc \
-  -e HTTP_BIND=0.0.0.0 \
+  -e PROXY_URL=https://npg.yourdomain.com/npm \
   ghcr.io/uscreen/npg:latest
 ```
 
 #### 4. Configure npm/pnpm to use the proxy
 ```bash
 # Point to your Docker host
-echo "registry=http://localhost:3000/npm/" >> ~/.npmrc
+echo "registry=https://npg.yourdomain.com/npm/" >> ~/.npmrc
 ```
 
 #### 5. Use npm/pnpm normally
@@ -93,6 +102,7 @@ pnpm install lodash
 ```
 
 **Docker Environment Variables:**
+- `PROXY_URL=https://npg.yourdomain.com/npm` - URL + path to your proxy
 - `HTTP_PORT=3000` - Server port (default: 3000)
 - `HTTP_BIND=0.0.0.0` - Bind address (important for Docker)
 - `LOG_LEVEL=info` - Log level (debug, info, warn, error)
@@ -110,7 +120,7 @@ HTTP_BIND=0.0.0.0
 
 # Registry settings
 REGISTRY_URL=https://registry.npmjs.org
-PROXY_URL=http://127.0.0.1:3000/npm
+PROXY_URL=https://npg.yourdomain.com/npm
 
 # Storage settings
 STORAGE_DIR=../var/storage
