@@ -1,0 +1,71 @@
+name: npg-prod-single
+
+services:
+  traefik:
+    image: traefik:v3.1
+    # No container_name needed - uses project name
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    command:
+      # API and dashboard
+      - --api.dashboard=true
+      - --api.insecure=false
+      # Docker provider
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      # Entry points
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # HTTP to HTTPS redirects
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      # Let's Encrypt
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # Compression
+      - --entrypoints.websecure.http.middlewares=compression@docker
+    labels:
+      # Dashboard
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_DOMAIN:-traefik.localhost}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      # Compression middleware
+      - "traefik.http.middlewares.compression.compress=true"
+
+  npg:
+    image: ghcr.io/uscreen/npg:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - npg_storage:${STORAGE_DIR:-/app/var/storage}
+      - npg_malware:${MALWARE_LIST_DIR:-/app/var/malware-list}
+      - ./blacklist.yml:${BLACKLIST_PATH:-/app/etc/blacklist.yml}:ro
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('http').get('http://localhost:3000/api/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.npg.rule=Host(`${NPG_DOMAIN}`)"
+      - "traefik.http.routers.npg.entrypoints=websecure"
+      - "traefik.http.routers.npg.tls.certresolver=letsencrypt"
+      - "traefik.http.services.npg.loadbalancer.server.port=3000"
+      # Apply compression middleware
+      - "traefik.http.routers.npg.middlewares=compression@docker"
+
+volumes:
+  npg_storage:
+  npg_malware:
+  traefik_letsencrypt:

@@ -1,0 +1,32 @@
+# NPG Suspicious Packages Blacklist
+# Generated from security analysis - potential typosquatting/malicious packages
+# Source: Security research identifying packages with suspicious patterns
+
+# Block packages (entirely or specific versions/ranges)
+packages:
+  - name: malicious-package
+    reason: Known malware - blocks all versions
+
+  - name: '@evil/package'
+    reason: Malicious scoped package - blocks all versions
+
+  - name: lodash
+    versions: [4.17.20, 4.17.21]
+    reason: Prototype pollution vulnerability - exact versions
+
+  - name: colors
+    versions: ['>=1.4.44 <1.4.46']
+    reason: DoS vulnerability - semver range
+
+  - name: node-ipc
+    versions: [^9.0.0, ^10.0.0]
+    reason: Malicious code in these major versions
+
+  - name: mixed-example
+    versions: [1.2.3, '>=2.0.0 <3.0.0', ^4.0.0]
+    reason: Mixed exact versions and ranges
+
+# Block by pattern
+patterns:
+  - pattern: '.*malware.*'
+    reason: Suspicious package name

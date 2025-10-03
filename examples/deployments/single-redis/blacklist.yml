@@ -1,0 +1,14 @@
+# Example blacklist configuration
+# Uncomment and customize as needed
+
+packages: []
+#  - name: malicious-package
+#    reason: Known malware
+#
+#  - name: debug
+#    versions: [4.4.2]
+#    reason: cryptostealer malware
+
+patterns: []
+#  - pattern: '.*suspicious.*'
+#    reason: Suspicious package names

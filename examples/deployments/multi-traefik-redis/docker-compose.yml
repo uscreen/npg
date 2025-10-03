@@ -1,0 +1,111 @@
+name: npg-cluster
+
+services:
+  traefik:
+    image: traefik:v3.1
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    command:
+      # API and dashboard
+      - --api.dashboard=true
+      - --api.insecure=false
+      # Docker provider
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      # Entry points
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # HTTP to HTTPS redirect
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      # Let's Encrypt
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # Compression and load balancing
+      - --entrypoints.websecure.http.middlewares=compression@docker
+      # Access logs for monitoring
+      - --accesslog=true
+      - --log.level=INFO
+    labels:
+      # Dashboard
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_DOMAIN:-traefik.localhost}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      # Compression middleware
+      - "traefik.http.middlewares.compression.compress=true"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory ${REDIS_MAX_MEMORY:-1gb}
+      --maxmemory-policy allkeys-lru
+      --tcp-keepalive 60
+      --timeout 300
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: ${REDIS_MAX_MEMORY:-512mb}
+
+  npg:
+    image: ghcr.io/uscreen/npg:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - npg_storage:${STORAGE_DIR:-/app/var/storage}
+      - npg_malware:${MALWARE_LIST_DIR:-/app/var/malware-list}
+      - ./blacklist.yml:${BLACKLIST_PATH:-/app/etc/blacklist.yml}:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('http').get('http://localhost:3000/api/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      replicas: ${NPG_REPLICAS:-3}
+      resources:
+        limits:
+          memory: ${NPG_MAX_MEMORY:-1gb}
+        reservations:
+          memory: 256mb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.npg.rule=Host(`${NPG_DOMAIN}`)"
+      - "traefik.http.routers.npg.entrypoints=websecure"
+      - "traefik.http.routers.npg.tls.certresolver=letsencrypt"
+      - "traefik.http.services.npg.loadbalancer.server.port=3000"
+      # Health check for load balancing
+      - "traefik.http.services.npg.loadbalancer.healthcheck.path=/api/health"
+      - "traefik.http.services.npg.loadbalancer.healthcheck.interval=10s"
+      - "traefik.http.services.npg.loadbalancer.healthcheck.timeout=3s"
+      # Apply compression middleware
+      - "traefik.http.routers.npg.middlewares=compression@docker"
+
+volumes:
+  npg_storage:
+  npg_malware:
+  redis_data:
+  traefik_letsencrypt:

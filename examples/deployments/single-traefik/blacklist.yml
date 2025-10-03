@@ -1,0 +1,10 @@
+# Example blacklist configuration
+# Uncomment and customize as needed
+
+packages: []
+#  - name: malicious-package
+#    reason: Known malware
+
+patterns: []
+#  - pattern: '.*suspicious.*'
+#    reason: Suspicious package names

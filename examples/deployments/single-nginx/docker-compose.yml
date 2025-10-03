@@ -1,0 +1,24 @@
+name: npg-local
+
+services:
+  npg:
+    image: ghcr.io/uscreen/npg:latest
+    ports:
+      - "127.0.0.1:${HTTP_PORT:-3000}:3000"
+    env_file:
+      - .env
+    volumes:
+      - npg_storage:${STORAGE_DIR:-/app/var/storage}
+      - npg_malware:${MALWARE_LIST_DIR:-/app/var/malware-list}
+      - ./blacklist.yml:${BLACKLIST_PATH:-/app/etc/blacklist.yml}:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('http').get('http://localhost:3000/api/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  npg_storage:
+  npg_malware:

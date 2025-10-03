@@ -26,7 +26,18 @@ A security-focused npm registry proxy that protects your development environment
 - **Sharded Storage** - 2-character directory sharding for optimal filesystem performance
 - **Cache Monitoring** - `X-Cache` headers for performance insights
 
-## Pre-Built Docker
+## Docker Compose
+
+For production setups, check out some ready-to-use **Docker Compose** examples:
+
+- **[`single-nginx`](./examples/deployments/single-nginx/)** - Simple setup with nginx configuration
+- **[`single-redis`](./examples/deployments/single-redis/)** - High-performance caching with Redis
+- **[`single-traefik`](./examples/deployments/single-traefik/)** - Automatic HTTPS with Traefik
+- **[`multi-traefik-redis`](./examples/deployments/multi-traefik-redis/)** - Production cluster with load balancing
+
+See [`examples/deployments/`](./examples/deployments/) for detailed setup instructions.
+
+## Docker
 
 ### Quick Start
 
@@ -48,18 +59,9 @@ npm install lodash
 pnpm install lodash
 ```
 
-### Production Setup
+### General Production Setup
 
 For production or containerized environments, you should deploy NPG with persistent storage and custom configuration.
-
-**⚠️ Important for Production**: Always deploy NPG behind a reverse proxy (traefik, nginx, Cloudflare, etc.) that handles:
-- **TLS termination** for secure HTTPS connections
-- **Compression** (gzip/brotli) for optimal performance - this is critical for npm metadata. Missing compression can lead to very slow installs.
-- **Custom Domain & Path Setup** - e.g. `https://npg.yourdomain.com/npm` - this is crucial for rewriting URLs correctly for npm clients (esp. pnpm).
-
-For now, NPG itself serves uncompressed HTTP traffic and relies on the reverse proxy for these essential production features.
-
-> **Coming Soon**: Docker Compose examples for common production scenarios (traefik reverse proxy, Redis caching, multi-instance deployments) will be added to simplify deployment.
 
 #### 1. Create directories for persistent data
 ```bash
@@ -108,6 +110,13 @@ pnpm install lodash
 - `LOG_LEVEL=info` - Log level (debug, info, warn, error)
 - `STORAGE_DIR=/app/var/storage` - Storage directory (use Docker volumes)
 - `BLACKLIST_PATH=/app/etc/blacklist.yml` - Blacklist configuration path
+
+**⚠️ Important for Production**: Always deploy NPG behind a reverse proxy (traefik, nginx, Cloudflare, etc.) that handles:
+- **TLS termination** for secure HTTPS connections
+- **Compression** (gzip/brotli) for optimal performance - this is critical for npm metadata. Missing compression can lead to very slow installs.
+- **Custom Domain & Path Setup** - e.g. `https://npg.yourdomain.com/npm` - this is crucial for rewriting URLs correctly for npm clients (esp. pnpm).
+
+For now, NPG itself serves uncompressed HTTP traffic and relies on the reverse proxy for these essential production features.
 
 ## Configuration
 
@@ -277,8 +286,7 @@ Blocked packages return detailed security information:
 NPG is compatible with:
 - npm (all versions)
 - pnpm (all versions)
-- npm audit
-- npm search
+- yarn (all versions)
 - Private registries (configure `REGISTRY_URL`)
 - Scoped packages
 
