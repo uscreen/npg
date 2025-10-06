@@ -1,11 +1,31 @@
-# NPG (Node Package Guard)
+<p align="center">
+    <img width="160" src="assets/npg-logo.svg" alt="NPG logo">
+</p>
+<p align="center"><b>open-source npm security gateway:</b><br> supply chain defense, faster CI, no dev install</p>
+<p align="center">
+  <a href="https://github.com/uscreen/npg/actions/workflows/docker.yml">
+    <img src="https://github.com/uscreen/npg/actions/workflows/docker.yml/badge.svg" alt="Test & Build">
+  </a>
+  <a href="https://snyk.io/test/github/uscreen/npg">
+    <img src="https://snyk.io/test/github/uscreen/npg/badge.svg" alt="Known Vulnerabilities">
+  </a>
+  <a href="https://codecov.io/gh/uscreen/npg">
+    <img src="https://codecov.io/gh/uscreen/npg/graph/badge.svg?token=0QK0kheO7v" alt="codecov">
+  </a>
+  <a href="https://opensource.org/license/agpl-v3">
+    <img src="https://img.shields.io/badge/license-AGPL_v3-blue" alt="License: AGPL v3">
+  </a>
+</p>
 
-[![Test & Build](https://github.com/uscreen/npg/actions/workflows/docker.yml/badge.svg)](https://github.com/uscreen/npg/actions/workflows/docker.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/uscreen/npg/badge.svg)](https://snyk.io/test/github/uscreen/npg)
-[![codecov](https://codecov.io/gh/uscreen/npg/graph/badge.svg?token=0QK0kheO7v)](https://codecov.io/gh/uscreen/npg)
-[![License: AGPL v3](https://img.shields.io/badge/license-AGPL_v3-blue)](https://opensource.org/license/agpl-v3)
+# NPG - Node Package Guard
 
 A security-focused npm registry proxy that protects your development environment from malicious packages and supply chain attacks while providing high-performance caching.
+
+Deploy on your own infrastructure and point your npm/pnpm/yarn to it:
+
+```bash
+echo "registry=https://npg.yourdomain.dev/npm/" >> ~/.npmrc
+```
 
 ## Security Features
 
